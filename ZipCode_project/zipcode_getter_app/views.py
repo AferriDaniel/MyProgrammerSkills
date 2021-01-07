@@ -14,15 +14,22 @@ def home(request):
 
 
 def zipcode_getter(req):
+	
 	if req.method == 'POST':
 		form = StreetName(req.POST)
 		if form.is_valid():
 			r = req.get(f'https://nominatim.openstreetmap.org/search?q={form}&format=json')#, params=get_params(y))
-			# return HttpResponse(r)
-			dump = r.json()
-			return HttpResponse(dump[0]["display_name"])
+			return HttpResponse(r)
+			# dump = r.json()
+			# return HttpResponse(dump[0]["display_name"])
+			# 
 	# return HttpResponse(dump, content_type="application/json" )
-	
-	elif req.method == 'GET':
-		return HttpResponse("NOT POST METHOD")
 
+	elif req.method == 'GET':
+		form = StreetName()
+		return render(req, 'addressform.html', {'form':form})
+
+
+
+# def zipcode_getter(request):
+	

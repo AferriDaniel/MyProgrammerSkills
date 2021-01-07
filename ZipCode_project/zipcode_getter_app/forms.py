@@ -4,7 +4,6 @@ from ajax_select.fields import AutoCompleteField
 from django import forms
 from .models import Address
 
-
 class  AddressForm(forms.ModelForm):
 	class Meta: 
 
@@ -12,6 +11,7 @@ class  AddressForm(forms.ModelForm):
 		fields = ['street_name']
 		
 	name = AutoCompleteField('street_name')
+
 
 class StreetName(forms.Form):
 
