@@ -1,5 +1,6 @@
-<form action="https://nominatim.openstreetmap.org/search?q={form}&format=json", method="post">
+<form method="post">
     {% csrf_token %}
     {{ form }}
-    <input type="submit" value="Submit" />
-</form
+    <button type="submit" > Busqueda de calle </button>
+</form>
+

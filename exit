@@ -1,0 +1,160 @@
+[1mdiff --git a/ZipCode_project/ZipCode_project/urls.py b/ZipCode_project/ZipCode_project/urls.py[m
+[1mindex 4bb7a55..a77b399 100644[m
+[1m--- a/ZipCode_project/ZipCode_project/urls.py[m
+[1m+++ b/ZipCode_project/ZipCode_project/urls.py[m
+[36m@@ -1,5 +1,5 @@[m
+[31m-"""ZipCode_project URL Configuration[m
+[31m-[m
+[32m+[m[32m"""ZipCode_project URL Configuratio[m
+[32m+[m[32mn[m
+ The `urlpatterns` list routes URLs to views. For more information please see:[m
+     https://docs.djangoproject.com/en/3.1/topics/http/urls/[m
+ Examples:[m
+[36m@@ -17,12 +17,12 @@[m [mfrom django.urls import path,include[m
+ from django.conf.urls.static import static[m
+ from django.contrib import admin[m
+ from django.conf import settings[m
+[31m-from ajax_select import urls as ajax_select_urls[m
+[32m+[m[32m# from ajax_select import urls as ajax_select_urls[m
+ from zipcode_getter_app import views[m
+ [m
+ urlpatterns = [[m
+ 	path('', views.home, name='home'),[m
+     path('zipcode_getter', views.zipcode_getter, name = 'zipcode_getter'),[m
+[31m-    path('ajax_select/', admin.site.urls),[m
+[31m-    path('zipcode_getter_app/', include(ajax_select_urls)),[m
+[31m-] + static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)[m
+\ No newline at end of file[m
+[32m+[m[32m    # path('ajax_select/', admin.site.urls),[m
+[32m+[m[32m    # path('zipcode_getter_app/', include(ajax_select_urls)),[m
+[32m+[m[32m] # + static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)[m
+\ No newline at end of file[m
+[1mdiff --git a/ZipCode_project/templates/addressform.html b/ZipCode_project/templates/addressform.html[m
+[1mindex 758df5c..7693cbb 100644[m
+[1m--- a/ZipCode_project/templates/addressform.html[m
+[1m+++ b/ZipCode_project/templates/addressform.html[m
+[36m@@ -1,5 +1,6 @@[m
+[31m-<form action="https://nominatim.openstreetmap.org/search?q={form}&format=json", method="post">[m
+[32m+[m[32m<form method="post">[m
+     {% csrf_token %}[m
+     {{ form }}[m
+[31m-    <input type="submit" value="Submit" />[m
+[31m-</form[m
+\ No newline at end of file[m
+[32m+[m[32m    <button type="submit" > Busqueda de calle </button>[m
+[32m+[m[32m</form>[m
+[41m+[m
+[1mdiff --git a/ZipCode_project/zipcode_getter_app/admin.py b/ZipCode_project/zipcode_getter_app/admin.py[m
+[1mindex 4e68840..efb0c15 100644[m
+[1m--- a/ZipCode_project/zipcode_getter_app/admin.py[m
+[1m+++ b/ZipCode_project/zipcode_getter_app/admin.py[m
+[36m@@ -1,12 +1,12 @@[m
+ [m
+ from django.contrib import admin[m
+[31m-from ajax_select.admin import AjaxSelectAdmin[m
+[32m+[m[32m#from ajax_select.admin import AjaxSelectAdmin[m
+ from .forms import AddressForm[m
+ from .models import Address[m
+ # Register your models here.[m
+ [m
+[31m-@admin.register(Address)[m
+[32m+[m[32m#@admin.register(Address)[m
+ [m
+[31m-class AddressAdmin(AjaxSelectAdmin):[m
+[32m+[m[32mclass AddressAdmin(admin.ModelAdmin):#AjaxSelectAdmin[m
+ [m
+[31m-	form = AddressForm[m
+\ No newline at end of file[m
+[32m+[m	[32mpass[m
+\ No newline at end of file[m
+[1mdiff --git a/ZipCode_project/zipcode_getter_app/forms.py b/ZipCode_project/zipcode_getter_app/forms.py[m
+[1mindex 0c166cd..e9a9ccc 100644[m
+[1m--- a/ZipCode_project/zipcode_getter_app/forms.py[m
+[1m+++ b/ZipCode_project/zipcode_getter_app/forms.py[m
+[36m@@ -1,6 +1,6 @@[m
+ [m
+ [m
+[31m-from ajax_select.fields import AutoCompleteField[m
+[32m+[m[32m#from ajax_select.fields import AutoCompleteField[m
+ from django import forms[m
+ from .models import Address[m
+ [m
+[36m@@ -10,9 +10,9 @@[m [mclass  AddressForm(forms.ModelForm):[m
+ 		model = Address[m
+ 		fields = ['street_name'][m
+ 		[m
+[31m-	name = AutoCompleteField('street_name')[m
+[32m+[m	[32mname = forms.CharField(label='street_name',max_length=100)[m
+ [m
+ [m
+ class StreetName(forms.Form):[m
+ [m
+[31m-	address_name = forms.CharField(label = 'Adress', max_length = 100)[m
+\ No newline at end of file[m
+[32m+[m	[32maddress_name = forms.CharField(label = 'Address', max_length = 100)[m
+\ No newline at end of file[m
+[1mdiff --git a/ZipCode_project/zipcode_getter_app/lookup.py b/ZipCode_project/zipcode_getter_app/lookup.py[m
+[1mdeleted file mode 100644[m
+[1mindex 91a6ff5..0000000[m
+[1m--- a/ZipCode_project/zipcode_getter_app/lookup.py[m
+[1m+++ /dev/null[m
+[36m@@ -1,13 +0,0 @@[m
+[31m-from ajax_select import register, LookupChannel[m
+[31m-[m
+[31m-from .models import Address[m
+[31m-[m
+[31m-@register('street_name')[m
+[31m-class AddressLoookup(LookupChannel):[m
+[31m-[m
+[31m-	model = Address[m
+[31m-[m
+[31m-	def get_query(self,q,request):[m
+[31m-		return self.model.objects.filter(street_name__icontains=q)[m
+[31m-	def  format_item_display(self, item):[m
+[31m-		return  u"<span class='street name'>%s</span>"  % item.street_name[m
+\ No newline at end of file[m
+[1mdiff --git a/ZipCode_project/zipcode_getter_app/views.py b/ZipCode_project/zipcode_getter_app/views.py[m
+[1mindex ea6ede4..556dea7 100644[m
+[1m--- a/ZipCode_project/zipcode_getter_app/views.py[m
+[1m+++ b/ZipCode_project/zipcode_getter_app/views.py[m
+[36m@@ -9,27 +9,21 @@[m [mdef home(request):[m
+ 	return render(request, 'home.html')[m
+ [m
+ [m
+[31m-# y='calle valentin fuster' [m
+[32m+[m[32mdef get_query(q):[m
+[32m+[m	[32mreturn q.replace(" ","+")[m
+ [m
+ [m
+[32m+[m[32mdef zipcode_getter(request):[m
+ [m
+[31m-def zipcode_getter(req):[m
+[31m-	[m
+[31m-	if req.method == 'POST':[m
+[31m-		form = StreetName(req.POST)[m
+[31m-		if form.is_valid():[m
+[31m-			r = req.get(f'https://nominatim.openstreetmap.org/search?q={form}&format=json')#, params=get_params(y))[m
+[31m-			return HttpResponse(r)[m
+[31m-			# dump = r.json()[m
+[31m-			# return HttpResponse(dump[0]["display_name"])[m
+[31m-			# [m
+[31m-	# return HttpResponse(dump, content_type="application/json" )[m
+[32m+[m	[32mif request.method=="GET":[m
+[32m+[m		[32mform=StreetName()[m
+[32m+[m		[32mreturn render(request, 'addressform.html', {'form':form})[m
+ [m
+[31m-	elif req.method == 'GET':[m
+[31m-		form = StreetName()[m
+[31m-		return render(req, 'addressform.html', {'form':form})[m
+[32m+[m	[32melif request.method=="POST":[m
+[32m+[m		[32maddress_name=request.POST["address_name"][m
+[32m+[m		[32murl= f"https://nominatim.openstreetmap.org/search?q={get_query(address_name)}&format=json"[m
+[32m+[m		[32mr=requests.get(url).json()[m
+[32m+[m		[32mdump=json.dumps(r[0]["display_name"].split(",")[7].strip())[m
+[32m+[m		[32mreturn HttpResponse(dump,content_type="application/json")[m
+ [m
+ [m
+[31m-[m
+[31m-# def zipcode_getter(request):[m
+[31m-	[m
+\ No newline at end of file[m
